@@ -29,8 +29,42 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       http://rusrails.ru/rails-routing
     </details>
 
+1. Что подразумевает собой 'convention over configuration'?
+    <details>
+        <summary>Ответ</summary>Обратите внимание, что у нас нет явного рендеринга в конце действия индекса в соответствии с принципом «соглашение важнее конфигурации». Правило состоит в том, что если вы не визуализируете что-то явно в конце действия контроллера, Rails автоматически ищет шаблон action_name.html.erb в пути представления контроллера и визуализирует его. Так что в этом случае Rails отобразит файл app/views/books/index.html.erb.
+    </details>
 1. Как использовать `content_for` и `yield`?
-1. Что такое скоупы (scopes)? Как использовать?
+    <details>
+        <summary>Ответ</summary>
+
+        ```rb
+          <div>
+            <h1> This is the wrapper!</h1>
+            <%= yield :my_content %>
+          </div>
+        ```
+            
+        content_for — это то, как вы указываете, какой контент будет отображаться в какой области layout
+        
+        ```rb
+        <% content_for :my_content do %>
+          This is the content.
+        <% end %>
+        ```
+            
+        Результат:
+        
+        ```rb
+        <div>
+          <h1> This is the wrapper!</h1>
+          This is the content.
+        </div>
+        ```
+            
+        Они являются противоположными концами процесса рендеринга, где yield указывает, куда идет контент, а content_for указывает, что представляет собой фактический контент.
+        Лучше всего использовать yield в layout и content_for во view.
+    </details>
+3. Что такое скоупы (scopes)? Как использовать?
 
     <details>
       <summary>Ответ</summary>
@@ -87,77 +121,6 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
 
       [Rails docs ru](http://rusrails.ru/asset-pipeline)
     </details>
-1. Что такое serializer и для чего он нужен? Где применяется? В чем его основная задача?
-    <details>
-      <summary>Ответ</summary>
-      Сериализация (serialization) - процесс перевода каких-либо структур данных в последовательность битов.
-      Обратный процесс называется "десериализация" (deserialization).
-
-      Сериализация используется для передачи объектов по сети и сохранения их в файлы. Например: сериализация заполненного объекта в XML-документ с последующей передачей документа
-      по HTTP или протоколам электронной почты.
-
-      Также часто используется для преобразования информации в формат JSON.
-
-      В Rails интерфейс базовой сериализации представлен модулем `ActiveModel::Serialization`
-      Вам необходимо объявить хэш, содержащий атрибуты, которые вы хотите сериализовать. Атрибуты должны быть строками, не символами.
-
-      Что касается JSON, то Active Model также предоставляет модуль `ActiveModel::Serializers::JSON` для сериализации/десериализации JSON.
-
-      [Статья в wiki о сериализации](https://ru.wikipedia.org/wiki/Сериализация)
-
-      [Rails docs ru](http://rusrails.ru/active-model-basics)
-
-      [Rails docs en](https://api.rubyonrails.org/classes/ActiveModel/Serialization.html)
-    </details>
-
-1. Что такое presenter и для чего он нужен? Где применяется? В чем его основная задача?
-    <details>
-      <summary>Ответ</summary>
-      Presenter - паттерн проектирования, простой класс (в Rails), использующийся для вынесения какой-либо логики по обработке моделей из слоя контроллеров и слоя представлений.
-
-      Например:
-
-      ```rb
-      module Posts
-        class IndexPresenter
-          # здесь как раз и разбивается логика шаблона и контроллера,
-          # перенесите сюда логику из контроллеров
-          def posts
-            Posts.all
-          end
-
-          def authors
-            Authors.all
-          end
-
-          def post_published_count
-            Post.published_count
-          end
-        end
-      end
-      ```
-      Так будет выглядеть экшн `index` в контроллере
-
-      ```rb
-      def index
-        @presenter = Posts::IndexPresenter.new
-      end
-      ```
-
-      Так это будет представлено во `view`
-
-      ```rb
-       <p>
-         Всего опубликовано: <%= @presenter.published_count %>
-       </p>
-       <%= @presenter.authors # проход по массиву и отображение%>
-      ```
-
-      Подробнее [тут](https://kpumuk.info/ruby-on-rails/simplifying-your-ruby-on-rails-code/)
-
-      Еще можно [здесь](http://blog.rukomoynikov.ru/dekorator-prezenter-helper-v-ruby/)
-
-    </details>
 
 1. Что такое валидации? Как написать свои валидации? Для чего нужны валидации? Где применяются валидации? Примеры Валидаций.
     <details>
@@ -201,40 +164,9 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       [Rails docs en](https://guides.rubyonrails.org/active_record_validations.html)
     </details>
 1. Есть ли у Rails механизм, который отслеживает изменения в базе данных?
-
-1. Что такое `Rack`?
-
     <details>
       <summary>Ответ</summary>
-      https://www.8host.com/blog/kratkij-obzor-veb-serverov-dlya-prilozhenij-ruby/
-
-      Rack это промежуточное программное обеспечение, оно делит входящие HTTP-запросы на различные этапы, затем обрабатывает их по частям, после чего посылает ответ веб-приложения (контроллера).
-
-      Программа Rack  состоит из двух отдельных компонентов: обработчика и адаптера, с помощью которых происходит обмен данными между веб-серверами и приложениями (фреймворками).
-
-      Какие серверы есть:
-
-      * WEBrick
-      * Thin
-      * Puma
-      * Unicorn
-      * Phusion Passenger
-      * Iodine
-    </details>
-
-      [Как устроен Rack](https://gist.github.com/Integralist/8341704)
-
-      * https://www.youtube.com/watch?v=NJ-ilQMsqMs
-      * https://www.youtube.com/watch?v=MHYMObuEahc
-      * https://www.youtube.com/watch?v=DzrVB1-KyTU
-      * https://www.8host.com/blog/kratkij-obzor-veb-serverov-dlya-prilozhenij-ruby/
-    </details>
-
-1. Что такое `partial` и для чего используются?
-
-    <details>
-      <summary>Ответ</summary>
-      partial — это кусочек кода, который можно вынести в отдельный темплейт, для удобства использования и для использования в других представлениях.
+      у нас paper trail, активируется для модели директивой has_paper_trail
     </details>
 
 1. Что такое Haml, Slim? Какие плюсы на ваш взгляд, их использования?
@@ -258,13 +190,6 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       **html** — расширение, которое позволяет использовать стандартный язык разметки HyperText Markup Language
 
       **erb** — позволяет включить использование кода написанного на языке Ruby вместе с языком разметки
-    </details>
-
-1. Что такое ERB? Можете расшифровать аббревиатуру?
-
-    <details>
-      <summary>Ответ</summary>
-      ERB — Embedded Ruby (встроенный Ruby)
     </details>
 
 1. Знать и рассказать структуру папок Rails приложения.
@@ -364,49 +289,6 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       http://rusrails.ru/active-record-associations#dopolnitelnye-metody-stolbtsov
     </details>
 
-1. Что такое полиморфные связи?
-
-    <details>
-      <summary>Ответ</summary>
-      Особый вид связи, при которой модель может принадлежать сразу нескольким моделям.
-
-      Например, картинку можно добавлять к статье, комментарию, пользователю.
-
-      ```rb
-      class Picture < ApplicationRecord
-        belongs_to :imageable, polymorphic: true
-      end
-
-      class Article < ApplicationRecord
-        has_many :pictures, as: :imageable
-      end
-
-      class Comment < ApplicationRecord
-        has_many :pictures, as: :imageable
-      end
-
-      class User < ApplicationRecord
-        has_many :pictures, as: :imageable
-      end
-      ```
-
-      При этом картинка сохраняет в себе имя класса и `id` объекта, которому она принадлежит. В приведённом примере у картинки имеются атрибуты `imageable_id` и `imageable_type`, это возможно благодаря миграции:
-
-      ```rb
-      class CreatePictures < ActiveRecord::Migration[5.2]
-        def change
-          create_table :pictures do |t|
-            t.references :imageable, polymorphic: true, index: true
-          end
-        end
-      end
-      ```
-
-      http://rusrails.ru/active-record-associations#polymorphic-associations
-
-    </details>
-
-1. Что такое `pluralize` и как он может быть полезен на проекте?
 1. Что такое `i18n` (интернационализация)?
 
     <details>
@@ -420,23 +302,6 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       Rails автоматически добавляет все файлы `.rb` и `.yml` из директории `config/locales` к пути загрузки переводов.
 
       http://rusrails.ru/rails-internationalization-i18n-api
-    </details>
-
-1. Что такое `dependent` связь?
-
-    <details>
-      <summary>Ответ</summary>
-
-      Опция `:dependent` указывает, что необходимо сделать с зависимой моделью (моделями) при удалении текущей модели. В зависимости от типа связи может принимать значения:
-
-      * `:delete` — связанные объекты будут удалены прямо из базы данных без вызова метода `destroy`, т.е. без соответствующих коллбэков
-      * `:delete_all` — см. `:delete`
-      * `:destroy` — будет вызван `destroy` на связанных объектах
-      * `:nullify` — внешний ключ будет установлен `NULL`
-      * `:restrict_with_error` — при наличии связанного объекта вызовет ошибку
-      * `:restrict_with_exception` — при наличии связанного объекта вызовется исключение
-
-      http://rusrails.ru/active-record-associations
     </details>
 
 1. Что такое `t.references`?
@@ -456,38 +321,6 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       ```
 
       http://rusrails.ru/active-record-associations
-    </details>
-
-1. Что такое exception и от чего наследуется?
-1. Как сгенерировать модель, контрoллер, представление (вьюху)
-
-    <details>
-      <summary>Ответ</summary>
-
-      В Rails для создания моделей, контроллеров и представлений используется консольная команда `rails generate` (или `rails g`) с необходимыми ключами.
-      Находиться при этом нужно в папке проекта.
-      Генераторы в Rails сильно упрощают создание проекта, т.к. нет необходимости создавать каждый файл вручную.
-
-      Например создание контроллера для модели "Greetings" в котором будет экшн `hello`:
-
-      ```rb
-      $ bin/rails generate controller Greetings hello
-           create  app/controllers/greetings_controller.rb
-            route  get "greetings/hello"
-           invoke  erb
-           create    app/views/greetings
-           create    app/views/greetings/hello.html.erb
-           invoke  test_unit
-           create    test/controllers/greetings_controller_test.rb
-           invoke  helper
-           create    app/helpers/greetings_helper.rb
-           invoke  assets
-           invoke    coffee
-           create      app/assets/javascripts/greetings.coffee
-           invoke    scss
-           create      app/assets/stylesheets/greetings.scss
-      ```
-      [Rails docs en](https://guides.rubyonrails.org/command_line.html#rails-generate)
     </details>
 
 1. Что такое scaffolding? Зачем он используется и где применяется?
@@ -524,8 +357,6 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       [Rails docs en](https://guides.rubyonrails.org/caching_with_rails.html)
     </details>
 
-1. ActiveRecord Query Interface - интерфейс запросов активрекорд. Для чего используется? Перечислите методы.
-1. Чем отличаются методы `find` и `find_by`?
 1. Представьте, что есть огромная табл. `users`. Как можно перебрать ее элементы максимально быстро?
 
     <details>
@@ -536,62 +367,9 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       * `start` — с какого id к примеру продолжить работу
       * `finish` — может использоваться совместно с `start`, к примеру чтобы выслать письма только пользователям с первичным ключом от 2000 до 10000:
 
-      https://apidock.com/rails/ActiveRecord/Batches/ClassMethods/find_each
+      https://apidock.com/rails/ActiveRecord/Batches/find_each
 
       http://rusrails.ru/active-record-query-interface
-    </details>
-
-1. Что такое проблема N+1 запроса?
-1. Как можно решить проблему N+1 в Rails?
-
-    <details>
-      <summary>Ответ</summary>
-      Указанный код выполнит 10 + 1 запрос в БД (первый запрос загрузит 10 клиентов, а затем для каждого клиента будет сделано по запросу).
-
-      ```rb
-      clients = Client.limit(10)
-
-      clients.each do |client|
-        puts client.address.postcode
-      end
-      ```
-
-      Проблему N+1 можно решить при помощи метода `includes`, при этом Active Record обеспечивает то, что все указанные связи загружаются с использованием минимально возможного количества запросов:
-
-      ```rb
-      clients = Client.includes(:address).limit(10)
-
-      clients.each do |client|
-        puts client.address.postcode
-      end
-      ```
-
-      В данном случае будет сделано всего два запроса:
-
-      ```sql
-      SELECT * FROM clients LIMIT 10
-      SELECT addresses.* FROM addresses WHERE (addresses.client_id IN (1,2,3,4,5,6,7,8,9,10))
-      ```
-
-      http://rusrails.ru/active-record-query-interface#neterpelivaya-zagruzka-svyazey
-    </details>
-
-1. Как без рендеринга шаблона сказать мобильному приложению, что у него нет прав на просмотр определённого контента одной строкой в контроллере?
-
-    <details>
-      <summary>Ответ</summary>
-
-      ```rb
-      head :forbidden
-      ```
-
-      или
-
-      ```rb
-      render status: 403
-      ```
-
-      https://guides.rubyonrails.org/layouts_and_rendering.html
     </details>
 
 1. Что такое Service Objects, Form Objects, View Objects, Query Objects, для чего они нужны?
@@ -611,19 +389,17 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
       https://habr.com/ru/post/158011/
     </details>
 
-1. Назовите отличия Hash и HashWithIndifferentAccess
-
+1.  Чем отличается after_save от after_commit? Почему это плохие паттерны?
     <details>
       <summary>Ответ</summary>
-      Отличие состоит в том, что из хэша нельзя достать значение по строковому ключу. Только по символу.
-
-      В HashWithIndifferentAccess можно получить ключ двумя способами.
-
-      https://stackoverflow.com/questions/31890778/difference-between-ruby-s-hash-and-activesupport-s-hashwithindifferentaccess
+        
+      * after_save is invoked when an object is created and updated
+      * after_commit is called on create, update and destroy - if after_commit raises an exception, then the transaction won't be rolled back
+      * after_create is only called when creating an object
+        
     </details>
-
-1.  Чем отличается after_save от after_commit? Почему это плохие паттерны?
 1.  Есть 2 версии приложения и в новой версии мы хотим поменять у уже существующей колонки значения на дефолтные, но чтоб в старом приложении все работало со старыми значениями (бд одна само собой). Как ты это будешь делать? Какую миграцию напишешь?
+
 1.  Пустое приложение, как ты сделаешь регистрацию пользователя и отправку ему имейла сразу после регистрации? Доп вопрос - как гарантировать, что мы юзеру отошлем только 1 имейл?
 
 Где искать ответы:
