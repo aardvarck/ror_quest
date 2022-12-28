@@ -402,8 +402,51 @@ https://github.com/aristofun/webdevdao/blob/master/interview/rails.md
 
 1.  Пустое приложение, как ты сделаешь регистрацию пользователя и отправку ему имейла сразу после регистрации? Доп вопрос - как гарантировать, что мы юзеру отошлем только 1 имейл?
 
-Где искать ответы:
+LINUX
+        
+1.  Как создавать файлы в Linux?
 
-* http://guides.rubyonrails.org/
-* http://rusrails.ru/
-* http://ruby-doc.org
+    <details>
+    <summary>Ответ</summary>
+    touch file1.doc
+
+    cat > file1.doc
+    </details>
+        
+1.  Как составить список и смонтировать устройства в Linux?
+
+    <details>
+    <summary>Ответ</summary>
+
+    Для просмотра списка точек монтирования выполните команду: df  -aTh
+
+    Чтобы найти больше информации о точках монтирования в вашей системе, выполните команду: findmnt
+
+    Кроме того, вы можете использовать команду cat: cat /proc/self/mounts
+
+    Также вы можете использовать команду mount, как показано далее: mount -l
+
+    </details>
+
+1.  Как проверить, работает ли конкретный сервис?
+
+    <details>
+    <summary>Ответ</summary>
+    Чтобы проверить, работает ли служба, используйте синтаксис:systemctl status service_name
+    </details>
+        
+        
+1. Спросить про сертификаты (update ca-cert)        
+
+1. Настройка прокси http_proxy, cntlm (для AD)
+
+1. openvpn
+
+1. Go - че-как
+        
+    <details>
+    <summary>Ответ</summary>
+    </details>
+        
+        
+      
